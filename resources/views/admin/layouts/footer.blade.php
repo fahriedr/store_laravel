@@ -1,7 +1,8 @@
-<footer class="sticky-footer bg-white">
-    <div class="container my-auto">
-        <div class="copyright text-center my-auto">
-            <span>Copyright &copy; Your Website {{\Carbon\Carbon::now()->year}}</span>
-        </div>
+
+
+<footer class="main-footer">
+    <div class="float-right d-none d-sm-block">
+        <b>Version</b> 3.1.0-rc
     </div>
+    <strong>Copyright &copy; {{\Carbon\Carbon::now()->year}} <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
 </footer>

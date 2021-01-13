@@ -37,41 +37,40 @@ class ProductsController extends Controller
         ];
 
         $this->validate($request, [
-            'product_name' => 'required',
+            'name' => 'required',
             'brand_id' => 'required',
             'category_id' => 'required',
-            'product_price' => 'required|integer',
-            'product_stock' => 'required|integer',
-            'product_desc' => 'required',
+            'price' => 'required|integer',
+            'stock' => 'required|integer',
+            'description' => 'required',
             // 'product_pict' => 'required|mimes:jpg,jpeg,png',
         ], $message);
 
         $product = new \App\Models\Products;
-        $product->product_name = $request->product_name;
+        $product->name = $request->name;
         $product->brand_id = $request->brand_id;
         $product->category_id = $request->category_id;
-        $product->product_price = $request->product_price;
-        $product->product_stock = $request->product_stock;
-        $product->product_desc = $request->product_desc;
+        $product->price = $request->price;
+        $product->stock = $request->stock;
+        $product->description = $request->description;
         $product->save();
 
         
-        $generator = new BarcodeGeneratorPNG();
-        $barcode = '<img src="data:image/png;base64,' . base64_encode($generator->getBarcode($product, $generator::TYPE_CODE_128)) . '" >';
-        $product->update(['barcode' => $barcode]);
+        // $generator = new BarcodeGeneratorPNG();
+        // $barcode = '<img src="data:image/png;base64,' . base64_encode($generator->getBarcode($product, $generator::TYPE_CODE_128)) . '" >';
+        // $product->update(['barcode' => $barcode]);
         
         
         if($request->hasFile('product_pict')) {
-            // dd($product_pict);
             $product_pict = $request->file('product_pict');
             foreach ($product_pict as $pro_pict) {
                 $product_picture = new \App\Models\ProductPicture;
-                $request->request->add(['product_id' => $product->product_id]);
+                $request->request->add(['id' => $product->id]);
                 $get_name = $pro_pict->getClientOriginalName();
                 $pict_name = time() . '-' . $get_name;
                 $pro_pict->move('backend/images/products_image/', $pict_name);
                 $product_picture->product_pict = $pict_name;
-                $product_picture->product_id = $request->product_id;
+                $product_picture->id = $request->id;
                 $product_picture->save();
             }
         }
@@ -98,7 +97,7 @@ class ProductsController extends Controller
         // dd($request->$pict_name);
         if ($request->hasFile('product_pict')) {
             $pict = $request->file('product_pict');
-            $slug = Str::slug($request->product_name) . "." . $pict->getClientOriginalExtension();
+            $slug = Str::slug($request->name) . "." . $pict->getClientOriginalExtension();
             $pict_name = time() . '-' . $slug;
             $pict->move('backend/images/products_image/', $pict_name);
             $product->product_pict = $pict_name;
@@ -113,7 +112,7 @@ class ProductsController extends Controller
     public function delete($id)
     {
         $product = Products::find($id);
-        $product_picture = ProductPicture::where('product_id', $id);
+        $product_picture = ProductPicture::where('id', $id);
         $picture_name = $product_picture->pluck('product_pict');
         // dd($product_picture);
         foreach ($picture_name as $pict_name) {
@@ -132,13 +131,13 @@ class ProductsController extends Controller
     public function detail($id)
     {
         $product = Products::find($id);
-        $product_picture = ProductPicture::where('product_id', $id);
+        $product_picture = ProductPicture::where('id', $id);
         $picture_name = $product_picture->pluck('product_pict');
         $pict = public_path() . '/backend/images/products_image/' . $picture_name;
         // dd($picture_name);
-        if ($product->product_stock >= 30) {
+        if ($product->stock >= 30) {
             $stock = "Ready Stok";
-        } elseif ($product->product_stock >= 1 && $product->product_stock < 30) {
+        } elseif ($product->stock >= 1 && $product->stock < 30) {
             $stock = "Limited";
         } else {
             $stock = "Out of Stock";
@@ -154,55 +153,56 @@ class ProductsController extends Controller
         $start_price = $request->start_price ?? null;
         $end_price = $request->end_price ?? null;
         $stock = $request->stock ?? null;
+        $price = $request->price ?? null;
         
 
-        $data = Products::select(
-            'product_id as id',
-            'product_name as name',
-            'product_price as price',
-            'product_stock as stock',
-            'brands.brand_name as brand',
-            'categories.category_name as category',
-            'barcode as barcode'
-        )
-        ->join('brands', 'brands.brand_id', 'products.brand_id')
-        ->join('categories', 'categories.category_id', 'products.category_id')
+        $data = Products::query()
         ->when( isset($brand_id) != null,
             function($q) use ($brand_id){
-                $q->where('brands.brand_id', '=', $brand_id);
+                $q->where('brand_id', '=', $brand_id);
             }
         )
         ->when( isset($category_id) != null,
             function($q) use ($category_id){
-                $q->where('categories.category_id', '=', $category_id);
+                $q->where('category_id', '=', $category_id);
             }
         )
         ->when( isset($start_price) != null,
             function($q) use ($start_price){
-                $q->where('products.product_price', '>=', $start_price);
+                $q->where('price', '>=', $start_price);
             }
         )
         ->when( isset($end_price) != null,
             function($q) use ($end_price){
-                $q->where('products.product_price', '<=', $end_price);
+                $q->where('price', '<=', $end_price);
             }
         )
         ->when( isset($stock) != null && $stock == 'in_stock',
             function($q) use ($stock){
-                $q->where('products.product_stock', '>=', 10);
+                $q->where('stock', '>=', 10);
             }
         )
         ->when( isset($stock) != null && $stock == 'limited',
             function($q) use ($stock){
                 $q->where([
-                    ['products.product_stock', '>', 0],
-                    ['products.product_stock', '<', 10]
+                    ['products.stock', '>', 0],
+                    ['products.stock', '<', 10]
                 ]);
             }
         )
         ->when( isset($stock) != null && $stock == 'out_of_stock',
             function($q) use ($stock){
-                $q->where('products.product_stock', '=', 0);
+                $q->where('products.stock', '=', 0);
+            }
+        )
+        ->when( isset($price) != null && $price == 'high_to_low', 
+            function($q) use ($price){
+                $q->orderBy('price', 'desc');
+            }
+        )
+        ->when( isset($price) != null && $price == 'low_to_high', 
+            function($q) use ($price){
+                $q->orderBy('price', 'asc');
             }
         )
         ->get();
@@ -210,6 +210,18 @@ class ProductsController extends Controller
         // return response()->json(['data' => $request->all()], 200);
 
         return DataTables::of($data)
+            ->editColumn( 
+                'brand_id',
+                function($q) {
+                    return $q->brands->brand_name;
+                }
+            )
+            ->editColumn( 
+                'category_id',
+                function($q) {
+                    return $q->categories->category_name;
+                }
+            )
             ->editColumn(
                 'price',
                 function($q) {

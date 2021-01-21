@@ -61,8 +61,10 @@ Route::group(
                     function(){
                         Route::get('', 'ProductsController@index')
                             ->name('admin.product');
-                        Route::post('create', 'ProductsController@create')
+                        Route::get('create', 'ProductsController@create')
                             ->name('admin.product.create');
+                        Route::post('store', 'ProductsController@store')
+                            ->name('admin.product.store');
                         Route::get('edit/{id}', 'ProductsController@edit')
                             ->name('admin.product.edit');
                         Route::post('update/{id}', 'ProductsController@update');

@@ -7,8 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Brands extends Model
 {
     protected $table = 'brands';
-    protected $primaryKey = 'brand_id';
-    protected $fillable = ['brand_name', 'brand_code', 'brand_logo'];
+    protected $fillable = ['name', 'code', 'logo'];
 
     public function products()
     {
@@ -17,9 +16,9 @@ class Brands extends Model
 
     public function getLogo()
     {
-        if (!$this->brand_logo) {
+        if (!$this->logo) {
             return asset('/backend/images/products-logo/default-logo.jpg');
         }
-        return asset('/backend/images/products-logo/' . $this->brand_logo);
+        return asset('assets/img/brands_logo/' . $this->logo);
     }
 }

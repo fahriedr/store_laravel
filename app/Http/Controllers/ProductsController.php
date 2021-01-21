@@ -22,12 +22,19 @@ class ProductsController extends Controller
         $brands = Brands::all();
         $categories = Categories::all();
 
-        return view('admin.products.index', ['products' => $products, 'brands' => $brands, 'categories' => $categories]);
+        return view('admin.products.index', compact('brands', 'categories'));
+    }
+
+    public function create()
+    {
+        $brands = Brands::all();
+        $categories = Categories::all();
+        return view('admin.products.create', compact('brands', 'categories'));
     }
 
 
     //Input new product to database
-    public function create(Request $request)
+    public function store(Request $request)
     {
 
         $message = [
@@ -56,9 +63,9 @@ class ProductsController extends Controller
         $product->save();
 
         
-        // $generator = new BarcodeGeneratorPNG();
-        // $barcode = '<img src="data:image/png;base64,' . base64_encode($generator->getBarcode($product, $generator::TYPE_CODE_128)) . '" >';
-        // $product->update(['barcode' => $barcode]);
+        $generator = new BarcodeGeneratorPNG();
+        $barcode = '<img src="data:image/png;base64,' . base64_encode($generator->getBarcode($product, $generator::TYPE_CODE_128)) . '" >';
+        $product->update(['barcode' => $barcode]);
         
         
         if($request->hasFile('product_pict')) {
@@ -213,13 +220,13 @@ class ProductsController extends Controller
             ->editColumn( 
                 'brand_id',
                 function($q) {
-                    return $q->brands->brand_name;
+                    return $q->brands->name;
                 }
             )
             ->editColumn( 
                 'category_id',
                 function($q) {
-                    return $q->categories->category_name;
+                    return $q->categories->name;
                 }
             )
             ->editColumn(

@@ -26,6 +26,9 @@
 
   {{-- Toastr --}}
   <link rel="stylesheet" href="{{asset("assets/plugins/toastr/toastr.min.css")}}">
+
+  {{-- SummerNote --}}
+  <link rel="stylesheet" href="{{asset("assets/plugins/summernote/summernote-bs4.min.css")}}">
   <style>
     .main-sidebar .sidebar {
         overflow-y: scroll;
@@ -224,12 +227,25 @@
 <script src="{{asset("assets/plugins/sweetalert2/sweetalert2.min.js")}}"></script>
 {{-- Toastr --}}
 <script src="{{asset("assets/plugins/toastr/toastr.min.js")}}"></script>
+
+{{-- SummerNote --}}
+<script src="{{asset("assets/plugins/summernote/summernote-bs4.min.js")}}"></script>
+
+{{-- Jquery Validation --}}
+<script src="{{asset("assets/plugins/jquery-validation/jquery.validate.min.js")}}"></script>
+<script src="{{asset("assets/plugins/jquery-validation/additional-methods.min.js")}}"></script>
 <script>
   $(function() {
     $('.select2').select2({
       theme: 'bootstrap4'
     })
   })
+
+  @if (Session::has('Success'))
+      toastr.success("{{Session::get('Success')}}")
+  @elseif (Session::has('Error'))
+      toastr.error("{{Session::get('Error')}}")
+  @endif
 </script>
 @yield('javascript')
 </body>

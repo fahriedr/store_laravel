@@ -1,16 +1,5 @@
 @extends('admin.layouts.master')
 
-@section('header')
-<link href="{{asset('backend/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css')}}" rel="stylesheet"
-    type="text/css" />
-<link href="{{asset('backend/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css')}}"
-    rel="stylesheet" type="text/css" />
-<link href="{{asset('backend/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css')}}" rel="stylesheet"
-    type="text/css" />
-<link href="{{asset('backend/assets/libs/datatables.net-select-bs4/css//select.bootstrap4.min.css')}}" rel="stylesheet"
-    type="text/css" />
-@endsection
-
 @section('content')
 <div class="content-page">
     <div class="content">
@@ -53,22 +42,10 @@
                                             role="grid" aria-describedby="basic-datatable_info" style="width: 1561px;">
                                             <thead>
                                                 <tr role="row">
-                                                    <th class="sorting_asc" tabindex="0" aria-controls="example1"
-                                                        rowspan="1" colspan="1" aria-sort="ascending"
-                                                        aria-label="Rendering engine: activate to sort column descending"
-                                                        style="width: 30px;">No</th>
-                                                    <th class="sorting_asc" tabindex="0" aria-controls="example1"
-                                                        rowspan="1" colspan="1" aria-sort="ascending"
-                                                        aria-label="Rendering engine: activate to sort column descending"
-                                                        style="width: 300px;">Brand Logo</th>
-                                                    <th class="sorting_asc" tabindex="0" aria-controls="example1"
-                                                        rowspan="1" colspan="1" aria-sort="ascending"
-                                                        aria-label="Rendering engine: activate to sort column descending"
-                                                        style="width: 300px;">Brand Name</th>
-                                                    <th class="sorting" tabindex="0" aria-controls="example1"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="CSS grade: activate to sort column ascending"
-                                                        style="width: 125px;">Aksi</th>
+                                                    <th>No</th>
+                                                    <th>Brand Logo</th>
+                                                    <th>Brand Name</th>
+                                                    <th>Aksi</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -78,9 +55,9 @@
                                                     <td><?= $no; ?></td>
                                                     <td><img src="{{$b->getLogo()}}" style="width: 150px; height:50px">
                                                     </td>
-                                                    <td>{{$b->brand_name}}</td>
+                                                    <td>{{$b->name}}</td>
                                                     <td>
-                                                        <a href="/admin/brand/edit/{{$b->brand_id}}"
+                                                        <a href="/admin/brand/edit/{{$b->id}}"
                                                             class="btn btn-warning btn-sm">Edit</a>
                                                         <a href="#" class="btn btn-danger btn-sm delete"
                                                             brand-id="{{$b->brand_id}}"
@@ -116,11 +93,11 @@
                     <div class="box-body">
                         <div class="form-group">
                             <label for="nim">Brand Name</label>
-                            <input name="brand_name" type="text" class="form-control" id="name" placeholder="Name">
+                            <input name="name" type="text" class="form-control" id="name" placeholder="Name">
                         </div>
                         <div class="form-group">
                             <label for="exampleInputFile">Logo</label>
-                            <input name="brand_logo" type="file" id="exampleInputFile" class="form-control-file">
+                            <input name="logo" type="file" id="exampleInputFile" class="form-control-file">
                         </div>
                     </div>
                     <!-- /.box-body -->

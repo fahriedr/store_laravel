@@ -70,8 +70,8 @@ Route::group(
                         Route::post('update/{id}', 'ProductsController@update');
                         Route::get('delete/{id}', 'ProductsController@delete')
                             ->name('admin.product.delete');
-                        Route::get('detail/{id}', 'ProductsController@detail')
-                            ->name('admin.product.detail');
+                        Route::get('view/{id}', 'ProductsController@view')
+                            ->name('admin.product.view');
                         Route::get('print_pdf', 'ProductsController@print_pdf');
                         Route::get('data', 'ProductsController@data')
                             ->name('admin.product.data');

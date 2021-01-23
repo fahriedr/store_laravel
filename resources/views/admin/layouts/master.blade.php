@@ -26,6 +26,15 @@
 
   {{-- Toastr --}}
   <link rel="stylesheet" href="{{asset("assets/plugins/toastr/toastr.min.css")}}">
+
+  {{-- SummerNote --}}
+  <link rel="stylesheet" href="{{asset("assets/plugins/summernote/summernote-bs4.min.css")}}">
+  
+  {{-- Slick JS --}}
+  <link rel="stylesheet" href="{{asset("assets/plugins/slick/slick.css")}}">
+  <link rel="stylesheet" href="{{asset("assets/plugins/slick/slick-theme.css")}}">
+
+  {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"> --}}
   <style>
     .main-sidebar .sidebar {
         overflow-y: scroll;
@@ -224,12 +233,29 @@
 <script src="{{asset("assets/plugins/sweetalert2/sweetalert2.min.js")}}"></script>
 {{-- Toastr --}}
 <script src="{{asset("assets/plugins/toastr/toastr.min.js")}}"></script>
+
+{{-- SummerNote --}}
+<script src="{{asset("assets/plugins/summernote/summernote-bs4.min.js")}}"></script>
+
+{{-- Slick-Js --}}
+<script src="{{asset("assets/plugins/slick/slick.min.js")}}"></script>
+{{-- <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script> --}}
+
 <script>
   $(function() {
     $('.select2').select2({
       theme: 'bootstrap4'
-    })
+    });
+    $('.product_pict').slick();
   })
+
+  @if (Session::has('Success'))
+      toastr.success("{{Session::get('Success')}}")
+  @elseif (Session::has('Error'))
+      toastr.error("{{Session::get('Error')}}")
+  @endif
 </script>
 @yield('javascript')
 </body>

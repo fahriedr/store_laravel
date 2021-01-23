@@ -38,8 +38,8 @@ class Products extends Model
         return asset('backend/images/products_image/' . $this->product_pict);
     }
 
-    public function product_picture()
+    public function product_images()
     {
-        return $this->hasMany(ProductPicture::class, 'product_id');
+        return $this->hasMany(ProductImages::class, 'product_id');
     }
 }

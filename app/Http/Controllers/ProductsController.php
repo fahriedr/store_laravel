@@ -7,27 +7,38 @@ use Illuminate\Http\Request;
 use App\Models\Products;
 use App\Models\Brands;
 use App\Models\Categories;
-use App\Models\ProductPicture;
+use App\Models\ProductImages;
 use PDF;
 use illuminate\Support\Facades\File;
 use Milon\Barcode\DNS1D;
 use Yajra\DataTables\DataTables;
 use Picqer\Barcode\BarcodeGeneratorPNG;
+use App\Helper\GlobalHelper;
+use Illuminate\Support\Facades\Storage;
 
 class ProductsController extends Controller
 {
+    use GlobalHelper;
+
     public function index()
     {
         $products = Products::all();
         $brands = Brands::all();
         $categories = Categories::all();
 
-        return view('admin.products.index', ['products' => $products, 'brands' => $brands, 'categories' => $categories]);
+        return view('admin.products.index', compact('brands', 'categories'));
+    }
+
+    public function create()
+    {
+        $brands = Brands::all();
+        $categories = Categories::all();
+        return view('admin.products.create', compact('brands', 'categories'));
     }
 
 
     //Input new product to database
-    public function create(Request $request)
+    public function store(Request $request)
     {
 
         $message = [
@@ -62,15 +73,14 @@ class ProductsController extends Controller
         
         
         if($request->hasFile('product_pict')) {
-            $product_pict = $request->file('product_pict');
-            foreach ($product_pict as $pro_pict) {
-                $product_picture = new \App\Models\ProductPicture;
+            $product_images = $request->file('product_pict');
+            foreach ($product_images as $pro_pict) {
+                $product_picture = new \App\Models\ProductImages;
                 $request->request->add(['id' => $product->id]);
-                $get_name = $pro_pict->getClientOriginalName();
-                $pict_name = time() . '-' . $get_name;
-                $pro_pict->move('backend/images/products_image/', $pict_name);
-                $product_picture->product_pict = $pict_name;
-                $product_picture->id = $request->id;
+                $result = $this->uploadImageProduct($pro_pict);
+                // $pro_pict->move('backend/images/products_image/', $pict_name);
+                $product_picture->image_url = $result;
+                $product_picture->product_id = $request->id;
                 $product_picture->save();
             }
         }
@@ -112,7 +122,7 @@ class ProductsController extends Controller
     public function delete($id)
     {
         $product = Products::find($id);
-        $product_picture = ProductPicture::where('id', $id);
+        $product_picture = ProductImages::where('id', $id);
         $picture_name = $product_picture->pluck('product_pict');
         // dd($product_picture);
         foreach ($picture_name as $pict_name) {
@@ -128,21 +138,21 @@ class ProductsController extends Controller
         return redirect('/admin/product')->with('Success', 'Product has been deleted');
     }
 
-    public function detail($id)
+    public function view($id)
     {
         $product = Products::find($id);
-        $product_picture = ProductPicture::where('id', $id);
-        $picture_name = $product_picture->pluck('product_pict');
-        $pict = public_path() . '/backend/images/products_image/' . $picture_name;
-        // dd($picture_name);
-        if ($product->stock >= 30) {
-            $stock = "Ready Stok";
-        } elseif ($product->stock >= 1 && $product->stock < 30) {
-            $stock = "Limited";
-        } else {
-            $stock = "Out of Stock";
-        }
-        return view('admin.products.detail', ['product' => $product, 'stock' => $stock, 'picture_name' => $picture_name]);
+        $product_image = ProductImages::where('product_id', $id)->get();
+
+
+
+        // $picture_name = $product_picture->pluck('image_url');
+        // $data = Storage::disk('public')->get($picture_name[0]);
+
+        // $pict = public_path() . '/backend/images/products_image/' . $picture_name[0];
+        // dd($pict);
+
+
+        return view('admin.products.view', compact('product', 'picture_name'));
     }
 
     public function data(Request $request)
@@ -213,13 +223,13 @@ class ProductsController extends Controller
             ->editColumn( 
                 'brand_id',
                 function($q) {
-                    return $q->brands->brand_name;
+                    return $q->brands->name;
                 }
             )
             ->editColumn( 
                 'category_id',
                 function($q) {
-                    return $q->categories->category_name;
+                    return $q->categories->name;
                 }
             )
             ->editColumn(

@@ -61,15 +61,17 @@ Route::group(
                     function(){
                         Route::get('', 'ProductsController@index')
                             ->name('admin.product');
-                        Route::post('create', 'ProductsController@create')
+                        Route::get('create', 'ProductsController@create')
                             ->name('admin.product.create');
+                        Route::post('store', 'ProductsController@store')
+                            ->name('admin.product.store');
                         Route::get('edit/{id}', 'ProductsController@edit')
                             ->name('admin.product.edit');
                         Route::post('update/{id}', 'ProductsController@update');
                         Route::get('delete/{id}', 'ProductsController@delete')
                             ->name('admin.product.delete');
-                        Route::get('detail/{id}', 'ProductsController@detail')
-                            ->name('admin.product.detail');
+                        Route::get('view/{id}', 'ProductsController@view')
+                            ->name('admin.product.view');
                         Route::get('print_pdf', 'ProductsController@print_pdf');
                         Route::get('data', 'ProductsController@data')
                             ->name('admin.product.data');

@@ -1,8 +1,6 @@
 @extends('admin.layouts.master')
 
-@section('title')
-    Products List
-@endsection
+@section('title', 'Products List')
 
 
 @section('content_header')
@@ -46,8 +44,8 @@
                         <select name="brand_filter" id="brand_filter" class="form-control select2">
                             <option value="">-- Select --</option>
                             @foreach ($brands as $b)
-                            <option value="{{$b->brand_id}}" @if (old('brand_id')==$b->brand_id) selected
-                                @endif>{{$b->brand_name}}
+                            <option value="{{$b->id}}" @if (old('brand_id')==$b->id) selected
+                                @endif>{{$b->name}}
                             </option>
                             @endforeach
                         </select>
@@ -63,8 +61,8 @@
                         <select name="category_filter" id="category_filter" class="form-control select2">
                             <option value="">-- Select --</option>
                             @foreach ($categories as $c)
-                                <option value="{{$c->category_id}}" @if (old('category_id')==$c->category_id) selected
-                                    @endif>{{$c->category_name}}
+                                <option value="{{$c->id}}" @if (old('category_id')==$c->id) selected
+                                    @endif>{{$c->name}}
                                 </option>
                             @endforeach
                         </select>
@@ -108,7 +106,7 @@
                 <h4 class="m-0 font-weight-bold text-primary"><strong>Products List</strong></h4>
             </div>
             <div class="card-tools">
-                <a href="#" class="btn btn-primary btn-md" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus"></i> Add Product</a>
+                <a href="{{route("admin.product.create")}}" class="btn btn-primary btn-md" ><i class="fa fa-plus-circle"></i> Add Product</a>
             </div>
         </div>
         <div class="card-body">
@@ -133,118 +131,6 @@
     </div>
 </div>
 
-<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="standard-modalLabel"
-    style="display: none;" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="standard-modalLabel">Modal Heading</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            </div>
-            <form role="form" action="{{route('admin.product.create')}}" method="post" enctype="multipart/form-data">
-                {{ csrf_field() }}
-                <div class="modal-body">
-                    <div class="box-body">
-                        <div class="form-group">
-                            <label for="nim">Product Name</label>
-                            <input name="name" type="text"
-                                class="form-control @if($errors->has('name')) parsley-error @endif" id="name"
-                                placeholder="Name" value="{{old('name')}}">
-                            @if ($errors->has('name'))
-                            <ul class="parsley-errors-list filled" id="parsley-id-7" aria-hidden="false">
-                                <li class="parsley-required">{{$errors->first('name')}}</li>
-                            </ul>
-                            @endif
-                        </div>
-                        <div class="form-group">
-                            <label>Brand</label>
-                            <select name="brand_id"
-                                class="form-control select2 @if($errors->has('brand_id')) parsley-error @endif">
-                                <option value="">--Brand--</option>
-                                @foreach ($brands as $b)
-                                <option value="{{$b->brand_id}}" @if (old('brand_id')==$b->brand_id) selected
-                                    @endif>{{$b->brand_name}} </option>
-                                @endforeach
-                            </select>
-                            @if ($errors->has('brand_id'))
-                            <ul class="parsley-errors-list filled" id="parsley-id-7" aria-hidden="false">
-                                <li class="parsley-required">{{$errors->first('brand_id')}}</li>
-                            </ul>
-                            @endif
-                        </div>
-                        <div class="form-group">
-                            <label>Category</label>
-                            <select name="category_id"
-                                class="form-control select2 @if($errors->has('category_id')) parsley-error @endif">
-                                <option value="">--Category--</option>
-                                @foreach ($categories as $c)
-                                <option value="{{$c->category_id}}" @if (old('category_id')==$c->category_id) selected
-                                    @endif>{{$c->category_name}}</option>
-                                @endforeach
-                            </select>
-                            @if ($errors->has('category_id'))
-                            <ul class="parsley-errors-list filled" id="parsley-id-7" aria-hidden="false">
-                                <li class="parsley-required">{{$errors->first('category_id')}}</li>
-                            </ul>
-                            @endif
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label for="nama">Price</label>
-                                <input name="price" type="num"
-                                    class="form-control @if($errors->has('price')) parsley-error @endif"
-                                    placeholder="Price" value="{{old('price')}}">
-                                @if ($errors->has('price'))
-                                <ul class="parsley-errors-list filled" id="parsley-id-7" aria-hidden="false">
-                                    <li class="parsley-required">{{$errors->first('price')}}</li>
-                                </ul>
-                                @endif
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="nama">Stock</label>
-                                <input name="stock" type="num"
-                                    class="form-control @if($errors->has('stock')) parsley-error @endif"
-                                    placeholder="Stock" value="{{old('stock')}}">
-                                @if ($errors->has('stock'))
-                                <ul class="parsley-errors-list filled" id="parsley-id-7" aria-hidden="false">
-                                    <li class="parsley-required">{{$errors->first('stock')}}</li>
-                                </ul>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="nama">Description</label>
-                            <textarea name="description" cols="30" rows="10"
-                                class="form-control @if($errors->has('description')) parsley-error @endif">{{old('description')}}</textarea>
-                            @if ($errors->has('description'))
-                            <ul class="parsley-errors-list filled" id="parsley-id-7" aria-hidden="false">
-                                <li class="parsley-required">{{$errors->first('description')}}</li>
-                            </ul>
-                            @endif
-                        </div>
-                        <div class="form-group">
-                            <label for="exampleInputFile">Pict</label>
-                            <input name="product_pict[]" type="file" multiple="multiple" id="exampleInputFile"
-                                class="form-control-file @if($errors->has('product_pict')) parsley-error @endif"
-                                value="{{old('product_pict')}}">
-                            @if ($errors->has('product_pict'))
-                            <ul class="parsley-errors-list filled" id="parsley-id-7" aria-hidden="false">
-                                <li class="parsley-required">{{$errors->first('product_pict')}}</li>
-                            </ul>
-                            @endif
-                        </div>
-                    </div>
-                    <!-- /.box-body -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-            </form>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div>
-
 @endsection
 
 @section('javascript')
@@ -253,9 +139,38 @@
         var table = null;
 
         (function(){
+            $('#summernote').summernote();
             loadTable();
             selectFilter();
             $('.select2').select2();
+            $.validator.setDefaults({
+                submitHandler: function () {
+                    alert( "Form successful submitted!" );
+                }
+            });
+            $('#quickForm').validate({
+                rules: {
+                    name: {
+                        required: true,
+                    },
+                },
+                messages: {
+                    name: {
+                        required: "Field is required",
+                    },
+                },
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
         })();
 
         function loadTable() {
@@ -297,7 +212,7 @@
                     { data: 'id', name: 'id', render: function(data){
                         let url = '{{url("/admin/product")}}'
                         return '<div class="btn-group">' +
-                        '<a class="btn btn-sm btn-info" href="' + url +'/detail/' + data +'"><i class="fas fa-eye" style="color: white"></i></a>' +
+                        '<a class="btn btn-sm btn-info" href="' + url +'/view/' + data +'"><i class="fas fa-eye" style="color: white"></i></a>' +
                         '<a class="btn btn-sm btn-warning" href="' + url +'/edit/' + data +'"><i class="fas fa-edit" style="color: white"></i></a>' +
                         '<a class="btn btn-sm btn-danger delete" href="#" onClick="deleteConfirm(' + data + ')"><i class="fas fa-trash" style="color: white"></i></a>' +
                         '</div>';
@@ -316,11 +231,12 @@
         }
 
         function reset() {
-            $('#brand_filter').val("");
-            $('#category_filter').val("");
+            $('#brand_filter').val("").change();
+            $('#category_filter').val("").change();
             $('#start_price').val("");
             $('#end_price').val("");
-            $('#stock_filter').val("");
+            $('#stock_filter').val("").change();
+            $('#price_filter').val("").change();
         }
         
 
@@ -345,12 +261,6 @@
     <script>
         @if($errors->any())
             $('#myModal').modal('show');
-        @endif
-
-        @if (Session::has('Success'))
-            toastr.success("{{Session::get('Success')}}")
-        @elseif (Session::has('Error'))
-            toastr.error("{{Session::get('Error')}}")
         @endif
     </script>
 @endsection

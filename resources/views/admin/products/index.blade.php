@@ -4,21 +4,21 @@
 
 
 @section('content_header')
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1>Products List</h1>
-                </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route("admin.dashboard")}}">Admin</a></li>
-                        <li class="breadcrumb-item active">Products List</li>
-                    </ol>
-                </div>
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Products List</h1>
             </div>
-        </div><!-- /.container-fluid -->
-    </section>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{{route("admin.dashboard")}}">Admin</a></li>
+                    <li class="breadcrumb-item active">Products List</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
 @endsection
 
 @section('content')
@@ -41,18 +41,18 @@
                 <div class="col-6">
                     <div class="form-group">
                         <label for="">Brand</label>
-                        <select name="brand_filter" id="brand_filter" class="form-control select2">
+                        <select name="brand_filter" id="brand_filter" class="form-control select2"
+                            onselect="alert('waw')">
                             <option value="">-- Select --</option>
                             @foreach ($brands as $b)
-                            <option value="{{$b->id}}" @if (old('brand_id')==$b->id) selected
-                                @endif>{{$b->name}}
-                            </option>
+                            <option value="{{$b->id}}">{{$b->name}}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="">Start Price</label>
-                        <input type="number" name="start_price" id="start_price" class="form-control money" placeholder="Rp." min="0">
+                        <input type="number" name="start_price" id="start_price" class="form-control money"
+                            placeholder="Rp." min="0">
                     </div>
                 </div>
                 <div class="col-6">
@@ -61,15 +61,14 @@
                         <select name="category_filter" id="category_filter" class="form-control select2">
                             <option value="">-- Select --</option>
                             @foreach ($categories as $c)
-                                <option value="{{$c->id}}" @if (old('category_id')==$c->id) selected
-                                    @endif>{{$c->name}}
-                                </option>
+                            <option value="{{$c->id}}">{{$c->name}}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="">End Price</label>
-                        <input type="number" name="end_price" id="end_price" class="form-control money" placeholder="Rp." min="0">
+                        <input type="number" name="end_price" id="end_price" class="form-control money"
+                            placeholder="Rp." min="0">
                     </div>
                 </div>
             </div>
@@ -106,7 +105,8 @@
                 <h4 class="m-0 font-weight-bold text-primary"><strong>Products List</strong></h4>
             </div>
             <div class="card-tools">
-                <a href="{{route("admin.product.create")}}" class="btn btn-primary btn-md" ><i class="fa fa-plus-circle"></i> Add Product</a>
+                <a href="{{route("admin.product.create")}}" class="btn btn-primary btn-md"><i
+                        class="fa fa-plus-circle"></i> Add Product</a>
             </div>
         </div>
         <div class="card-body">
@@ -134,43 +134,12 @@
 @endsection
 
 @section('javascript')
-    <script>
-
-        var table = null;
+<script>
+    var table = null;
 
         (function(){
-            $('#summernote').summernote();
             loadTable();
-            selectFilter();
             $('.select2').select2();
-            $.validator.setDefaults({
-                submitHandler: function () {
-                    alert( "Form successful submitted!" );
-                }
-            });
-            $('#quickForm').validate({
-                rules: {
-                    name: {
-                        required: true,
-                    },
-                },
-                messages: {
-                    name: {
-                        required: "Field is required",
-                    },
-                },
-                errorElement: 'span',
-                errorPlacement: function (error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-group').append(error);
-                },
-                highlight: function (element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function (element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
-                }
-            });
         })();
 
         function loadTable() {
@@ -257,10 +226,10 @@
                 })
         }
 
-    </script>
-    <script>
-        @if($errors->any())
+</script>
+<script>
+    @if($errors->any())
             $('#myModal').modal('show');
         @endif
-    </script>
+</script>
 @endsection

@@ -3,22 +3,22 @@
 @section('title', 'Product Detail')
 
 @section('content_header')
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1>Product Detail</h1>
-                </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route("admin.dashboard")}}">Admin</a></li>
-                        <li class="breadcrumb-item active"><a href="{{route("admin.product")}}">Products List</a></li>
-                        <li class="breadcrumb-item active">Product Detail</li>
-                    </ol>
-                </div>
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Product Detail</h1>
             </div>
-        </div><!-- /.container-fluid -->
-    </section>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{{route("admin.dashboard")}}">Admin</a></li>
+                    <li class="breadcrumb-item active"><a href="{{route("admin.product")}}">Products List</a></li>
+                    <li class="breadcrumb-item active">Product Detail</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
 @endsection
 
 
@@ -38,18 +38,14 @@
         </div>
         <div class="card-body">
             <div class="row">
-                <div class="col-md-5">
-                    <div class="product_pict">
-                        @foreach ($picture_name as $item)
-                            @php
-                                $data = Storage::disk('public')->get($item)
-                            @endphp
-                            {{-- <img class="img-fluid" src="{{  }}" width="200px" height="150px"> --}}
-                            <span>{{ $item }}</span>
+                <div class="col-md-6 bg-blue">
+                    <div class="image_slider mh-100">
+                        @foreach ($product_image as $item)
+                        <img class="" src="{{$item->image_url}}" style="width: 100px; height: 200px;">
                         @endforeach
                     </div>
                 </div>
-                <div class="col-md-7">
+                <div class="col-md-6">
                     Product
                 </div>
             </div>
@@ -63,7 +59,7 @@
 @section('javascript')
 <script>
     $(document).ready(function{
-        // $('.product_pict').slick();
+        
     });
 </script>
 @endsection

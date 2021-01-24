@@ -14,7 +14,7 @@ class BrandsController extends Controller
         $charLength = strlen($characters);
         $result = '';
 
-        for ($i=0; $i < $length; $i++) { 
+        for ($i = 0; $i < $length; $i++) {
             $result .= $characters[rand(0, $charLength - 1)];
         }
 
@@ -47,7 +47,7 @@ class BrandsController extends Controller
         if (Brands::where('name', $name)->exists()) {
             return redirect('/admin/brand')->with('Error', 'Brand already exists');
         }
-        
+
         $brand = new Brands();
         $brand->name = $name;
         $brand->code = $code;
@@ -100,5 +100,12 @@ class BrandsController extends Controller
         $brand->delete();
 
         return redirect('/admin/brands')->with('Success', 'Brand has been Deleted');
+    }
+
+    public function data(Request $request)
+    {
+        $data = Brands::select('id', 'name')->get();
+
+        return response()->json(['data' => $data], 200);
     }
 }

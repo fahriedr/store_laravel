@@ -35,7 +35,7 @@ Route::group(
     [
         'prefix' => 'admin'
     ],
-    function() {
+    function () {
         Route::get('login', 'AuthController@index')
             ->name('login');
         Route::post('postlogin', 'AuthController@postlogin');
@@ -44,12 +44,12 @@ Route::group(
             [
                 'middleware' => ['auth', 'checkRole']
             ],
-            function() {
+            function () {
                 Route::group(
                     [
                         'prefix' => 'dashboard'
                     ],
-                    function() {
+                    function () {
                         Route::get('', 'DashboardController@index')
                             ->name('admin.dashboard');
                     }
@@ -58,7 +58,7 @@ Route::group(
                     [
                         'prefix' => 'product'
                     ],
-                    function(){
+                    function () {
                         Route::get('', 'ProductsController@index')
                             ->name('admin.product');
                         Route::get('create', 'ProductsController@create')
@@ -81,20 +81,22 @@ Route::group(
                     [
                         'prefix' => 'brand'
                     ],
-                    function(){
+                    function () {
                         Route::get('', 'BrandsController@index')
                             ->name('admin.brand');
                         Route::post('create', 'BrandsController@create');
                         Route::get('edit/{id}', 'BrandsController@edit');
                         Route::post('update/{id}', 'BrandsController@update');
                         Route::get('delete/{id}', 'BrandsController@delete');
+                        Route::get('data', 'BrandsController@data')
+                            ->name('admin.brands.data');
                     }
                 );
                 Route::group(
                     [
                         'prefix' => 'category'
                     ],
-                    function(){
+                    function () {
                         Route::get('', 'CategoriesController@index')
                             ->name('admin.category');
                         Route::post('create', 'CategoriesController@create');
@@ -106,7 +108,7 @@ Route::group(
                     [
                         'prefix' => 'customer'
                     ],
-                    function(){
+                    function () {
                         Route::get('', 'CustomerController@index')
                             ->name('admin.customer');
                         Route::post('create', 'CustomerController@create');

@@ -9,6 +9,7 @@ use App\Models\Brands;
 use App\Models\Categories;
 use App\Models\ProductImages;
 use PDF;
+use Intervention\Image\ImageManagerStatic as Image;
 use illuminate\Support\Facades\File;
 use Milon\Barcode\DNS1D;
 use Yajra\DataTables\DataTables;
@@ -66,25 +67,26 @@ class ProductsController extends Controller
         $product->description = $request->description;
         $product->save();
 
-        
+
         // $generator = new BarcodeGeneratorPNG();
         // $barcode = '<img src="data:image/png;base64,' . base64_encode($generator->getBarcode($product, $generator::TYPE_CODE_128)) . '" >';
         // $product->update(['barcode' => $barcode]);
-        
-        
-        if($request->hasFile('product_pict')) {
+
+
+        if ($request->hasFile('product_pict')) {
             $product_images = $request->file('product_pict');
             foreach ($product_images as $pro_pict) {
                 $product_picture = new \App\Models\ProductImages;
                 $request->request->add(['id' => $product->id]);
-                $result = $this->uploadImageProduct($pro_pict);
-                // $pro_pict->move('backend/images/products_image/', $pict_name);
+                $image_resize = Image::make($pro_pict);
+                $image_resize->resize(600, 600);
+                $result = $this->uploadImageProduct($product->id, $image_resize);
                 $product_picture->image_url = $result;
                 $product_picture->product_id = $request->id;
                 $product_picture->save();
             }
         }
-        
+
 
         return redirect('/admin/product')->with('Success', 'Product has been added');
     }
@@ -143,16 +145,7 @@ class ProductsController extends Controller
         $product = Products::find($id);
         $product_image = ProductImages::where('product_id', $id)->get();
 
-
-
-        // $picture_name = $product_picture->pluck('image_url');
-        // $data = Storage::disk('public')->get($picture_name[0]);
-
-        // $pict = public_path() . '/backend/images/products_image/' . $picture_name[0];
-        // dd($pict);
-
-
-        return view('admin.products.view', compact('product', 'picture_name'));
+        return view('admin.products.view', compact('product', 'product_image'));
     }
 
     public function data(Request $request)
@@ -164,77 +157,86 @@ class ProductsController extends Controller
         $end_price = $request->end_price ?? null;
         $stock = $request->stock ?? null;
         $price = $request->price ?? null;
-        
+
 
         $data = Products::query()
-        ->when( isset($brand_id) != null,
-            function($q) use ($brand_id){
-                $q->where('brand_id', '=', $brand_id);
-            }
-        )
-        ->when( isset($category_id) != null,
-            function($q) use ($category_id){
-                $q->where('category_id', '=', $category_id);
-            }
-        )
-        ->when( isset($start_price) != null,
-            function($q) use ($start_price){
-                $q->where('price', '>=', $start_price);
-            }
-        )
-        ->when( isset($end_price) != null,
-            function($q) use ($end_price){
-                $q->where('price', '<=', $end_price);
-            }
-        )
-        ->when( isset($stock) != null && $stock == 'in_stock',
-            function($q) use ($stock){
-                $q->where('stock', '>=', 10);
-            }
-        )
-        ->when( isset($stock) != null && $stock == 'limited',
-            function($q) use ($stock){
-                $q->where([
-                    ['products.stock', '>', 0],
-                    ['products.stock', '<', 10]
-                ]);
-            }
-        )
-        ->when( isset($stock) != null && $stock == 'out_of_stock',
-            function($q) use ($stock){
-                $q->where('products.stock', '=', 0);
-            }
-        )
-        ->when( isset($price) != null && $price == 'high_to_low', 
-            function($q) use ($price){
-                $q->orderBy('price', 'desc');
-            }
-        )
-        ->when( isset($price) != null && $price == 'low_to_high', 
-            function($q) use ($price){
-                $q->orderBy('price', 'asc');
-            }
-        )
-        ->get();
+            ->when(
+                isset($brand_id) != null,
+                function ($q) use ($brand_id) {
+                    $q->where('brand_id', '=', $brand_id);
+                }
+            )
+            ->when(
+                isset($category_id) != null,
+                function ($q) use ($category_id) {
+                    $q->where('category_id', '=', $category_id);
+                }
+            )
+            ->when(
+                isset($start_price) != null,
+                function ($q) use ($start_price) {
+                    $q->where('price', '>=', $start_price);
+                }
+            )
+            ->when(
+                isset($end_price) != null,
+                function ($q) use ($end_price) {
+                    $q->where('price', '<=', $end_price);
+                }
+            )
+            ->when(
+                isset($stock) != null && $stock == 'in_stock',
+                function ($q) use ($stock) {
+                    $q->where('stock', '>=', 10);
+                }
+            )
+            ->when(
+                isset($stock) != null && $stock == 'limited',
+                function ($q) use ($stock) {
+                    $q->where([
+                        ['products.stock', '>', 0],
+                        ['products.stock', '<', 10]
+                    ]);
+                }
+            )
+            ->when(
+                isset($stock) != null && $stock == 'out_of_stock',
+                function ($q) use ($stock) {
+                    $q->where('products.stock', '=', 0);
+                }
+            )
+            ->when(
+                isset($price) != null && $price == 'high_to_low',
+                function ($q) use ($price) {
+                    $q->orderBy('price', 'desc');
+                }
+            )
+            ->when(
+                isset($price) != null && $price == 'low_to_high',
+                function ($q) use ($price) {
+                    $q->orderBy('price', 'asc');
+                }
+            )
+            ->get();
 
         // return response()->json(['data' => $request->all()], 200);
 
         return DataTables::of($data)
-            ->editColumn( 
+            ->editColumn(
                 'brand_id',
-                function($q) {
+                function ($q) {
                     return $q->brands->name;
                 }
             )
-            ->editColumn( 
+            ->editColumn(
                 'category_id',
-                function($q) {
+                function ($q) {
                     return $q->categories->name;
                 }
             )
             ->editColumn(
                 'price',
-                function($q) {
+                function ($q) {
                     return "Rp." . number_format($q->price);
                 }
             )

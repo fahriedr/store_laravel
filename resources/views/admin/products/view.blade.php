@@ -38,15 +38,12 @@
         </div>
         <div class="card-body">
             <div class="row">
-                <div class="col-md-6 bg-blue">
-                    <div class="image_slider mh-100">
+                <div class="col-md-5">
+                    <div class="image_slider">
                         @foreach ($product_image as $item)
-                        <img class="" src="{{$item->image_url}}" style="width: 100px; height: 200px;">
+                        <img src="{{$item->image_url}}" width="100" height="100">
                         @endforeach
                     </div>
-                </div>
-                <div class="col-md-6">
-                    Product
                 </div>
             </div>
 

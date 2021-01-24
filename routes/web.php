@@ -38,7 +38,8 @@ Route::group(
     function () {
         Route::get('login', 'AuthController@index')
             ->name('login');
-        Route::post('postlogin', 'AuthController@postlogin');
+        Route::post('postlogin', 'AuthController@postlogin')
+            ->name('postlogin');
         Route::get('logout', 'AuthController@logout');
         Route::group(
             [

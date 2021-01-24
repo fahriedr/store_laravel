@@ -244,6 +244,7 @@
 
   {{-- SummerNote --}}
   <script src="{{asset("assets/plugins/summernote/summernote-bs4.min.js")}}"></script>
+  <script src="{{asset("assets/plugins/summernote/lang/summernote-id-ID.js")}}"></script>
 
   {{-- Slick-Js --}}
   <script src="{{asset("assets/plugins/slick/slick.min.js")}}"></script>

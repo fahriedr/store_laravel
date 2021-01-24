@@ -9,13 +9,11 @@ use App\Models\Brands;
 use App\Models\Categories;
 use App\Models\ProductImages;
 use PDF;
-use Intervention\Image\ImageManagerStatic as Image;
 use illuminate\Support\Facades\File;
 use Milon\Barcode\DNS1D;
 use Yajra\DataTables\DataTables;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 use App\Helper\GlobalHelper;
-use Illuminate\Support\Facades\Storage;
 
 class ProductsController extends Controller
 {
@@ -55,8 +53,11 @@ class ProductsController extends Controller
             'price' => 'required|integer',
             'stock' => 'required|integer',
             'description' => 'required',
-            // 'product_pict' => 'required|mimes:jpg,jpeg,png',
+            'product_images' => 'required|mimes:jpg,jpeg,png',
         ], $message);
+
+        // $img = $this->resizeImage($request->file('product_pict'), 600, 600);
+        // dd($img);
 
         $product = new \App\Models\Products;
         $product->name = $request->name;
@@ -73,14 +74,12 @@ class ProductsController extends Controller
         // $product->update(['barcode' => $barcode]);
 
 
-        if ($request->hasFile('product_pict')) {
-            $product_images = $request->file('product_pict');
-            foreach ($product_images as $pro_pict) {
+        if ($request->hasFile('product_images')) {
+            $product_images = $request->file('product_images');
+            foreach ($product_images as $image) {
                 $product_picture = new \App\Models\ProductImages;
                 $request->request->add(['id' => $product->id]);
-                $image_resize = Image::make($pro_pict);
-                $image_resize->resize(600, 600);
-                $result = $this->uploadImageProduct($product->id, $image_resize);
+                $result = $this->uploadImageProduct($product->id, $image);
                 $product_picture->image_url = $result;
                 $product_picture->product_id = $request->id;
                 $product_picture->save();

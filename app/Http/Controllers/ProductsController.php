@@ -56,9 +56,6 @@ class ProductsController extends Controller
             'product_images' => 'required|mimes:jpg,jpeg,png',
         ], $message);
 
-        // $img = $this->resizeImage($request->file('product_pict'), 600, 600);
-        // dd($img);
-
         $product = new \App\Models\Products;
         $product->name = $request->name;
         $product->brand_id = $request->brand_id;
@@ -66,6 +63,7 @@ class ProductsController extends Controller
         $product->price = $request->price;
         $product->stock = $request->stock;
         $product->description = $request->description;
+        $product->code_product = $this->getCodeProduct();
         $product->save();
 
 
@@ -97,22 +95,52 @@ class ProductsController extends Controller
         $categories = Categories::all();
 
 
-        return view('admin.products.edit', ['product' => $product, 'brands' => $brands, 'categories' => $categories]);
+        return view('admin.products.edit', compact('product', 'brands', 'categories'));
     }
 
     //Update product to database
     public function update(Request $request, $id)
     {
+        $request2 = Request::create(route('admin.product.update', ['id' => $id]), 'POST');
+        $request2->headers->set('accept', 'application/json');
+        $message = [
+            'required' => 'This field is required',
+            'mimes' => 'Format foto must be jpg or png',
+            'integer' => 'Value must be numeric'
+        ];
+
+        $this->validate($request, [
+            'name' => 'required',
+            'brand_id' => 'required',
+            'category_id' => 'required',
+            'price' => 'required|integer',
+            'stock' => 'required|integer',
+            'description' => 'required',
+            // 'product_images' => 'required|mimes:jpg,png',
+        ], $message);
+
+        // dd($request->all());
+
         $product = Products::find($id);
-        $product->update($request->all());
-        // dd($request->$pict_name);
-        if ($request->hasFile('product_pict')) {
-            $pict = $request->file('product_pict');
-            $slug = Str::slug($request->name) . "." . $pict->getClientOriginalExtension();
-            $pict_name = time() . '-' . $slug;
-            $pict->move('backend/images/products_image/', $pict_name);
-            $product->product_pict = $pict_name;
-            $product->save();
+        $product->name = $request->name;
+        $product->brand_id = $request->brand_id;
+        $product->category_id = $request->category_id;
+        $product->price = $request->price;
+        $product->stock = $request->stock;
+        $product->weight = $request->weight;
+        $product->condition = $request->condition;
+        $product->description = $request->description;
+        $product->save();
+
+        if ($request->hasFile('product_images')) {
+            $product_images = $request->file('product_images');
+            foreach ($product_images as $image) {
+                $product_picture = new \App\Models\ProductImages;
+                $result = $this->uploadImageProduct($product->id, $image);
+                $product_picture->image_url = $result;
+                $product_picture->product_id = $request->id;
+                $product_picture->save();
+            }
         }
 
         return redirect('/admin/product')->with('Success', 'Product has been updated');

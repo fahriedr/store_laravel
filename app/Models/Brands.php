@@ -11,7 +11,7 @@ class Brands extends Model
 
     public function products()
     {
-        return $this->hasMany(Products::class, 'brand_id');
+        return $this->hasMany(Products::class);
     }
 
     public function getLogo()
